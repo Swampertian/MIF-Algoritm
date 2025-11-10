@@ -4,17 +4,17 @@ import (
 	"math"
 )
 
-func (g *Graph) findClosestStaleNode(dataID int) (int, float64) {
+func (g *Graph) closestStaleNeighbor(dataID int) (int, float64) {
 	minCost := math.Inf(1)
-	closest := -1
+	best := -1
 	for _, e := range g.Edges[dataID] {
-		target := g.Nodes[e.To]
-		if target.StalePackets > 0 && e.Cost < minCost {
+		dest := g.Nodes[e.To]
+		if len(dest.StalePackets) > 0 && dest.Energy > 0 && e.Cost < minCost {
 			minCost = e.Cost
-			closest = e.To
+			best = e.To
 		}
 	}
-	return closest, minCost
+	return best, minCost
 }
 
 func bottleneckCapacity(dataNode, staleNode *Node, cost float64) int {
@@ -35,4 +35,17 @@ func updateEnergy(sender, receiver *Node, cost float64, packets int) {
 	totalCost := cost * float64(packets)
 	sender.Energy -= totalCost
 	receiver.Energy -= totalCost
+}
+
+func (g *Graph) freshness(t int) int {
+	sum := 0
+	for _, n := range g.Nodes {
+		for _, p := range n.StalePackets {
+			sum += t - p.Timestamp
+		}
+		for _, p := range n.NewPackets {
+			sum += t - p.Timestamp
+		}
+	}
+	return sum
 }

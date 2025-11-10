@@ -1,10 +1,13 @@
 package main
 
+type Packet struct {
+	Timestamp int
+}
 type Node struct {
 	ID           int
 	Energy       float64
-	NewPackets   int
-	StalePackets int
+	NewPackets   []Packet
+	StalePackets []Packet
 }
 
 type Edge struct {
@@ -22,4 +25,7 @@ type Metrics struct {
 	TotalEnergyConsumed   float64
 	TotalPacketsOffloaded int
 	EnergyDepletedNodes   int
+	FreshnessBefore       int
+	FreshnessAfter        int
+	FreshnessGain         int
 }
