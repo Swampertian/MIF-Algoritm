@@ -13,6 +13,13 @@ type Edge struct {
 }
 
 type Graph struct {
-	Nodes map[int]*Node
-	Edges map[int][]Edge
+	Nodes   map[int]*Node
+	Edges   map[int][]Edge
+	Metrics Metrics
+}
+
+type Metrics struct {
+	TotalEnergyConsumed   float64
+	TotalPacketsOffloaded int
+	EnergyDepletedNodes   int
 }

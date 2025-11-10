@@ -4,7 +4,6 @@ import "fmt"
 
 func (g *Graph) GreedyMIF() {
 	for _, node := range g.Nodes {
-		// só processa nós com pacotes novos
 		if node.NewPackets <= 0 {
 			continue
 		}
@@ -12,42 +11,45 @@ func (g *Graph) GreedyMIF() {
 		for node.NewPackets > 0 {
 			staleID, cost := g.findClosestStaleNode(node.ID)
 			if staleID == -1 {
-				fmt.Printf("Node %d não encontrou stale nodes disponíveis\n", node.ID)
 				break
 			}
 
 			staleNode := g.Nodes[staleID]
-
-			// calcula a capacidade do caminho
 			bottle := bottleneckCapacity(node, staleNode, cost)
 			if bottle == 0 {
 				break
 			}
 
-			// define quantos pacotes transferir
 			q := minInt(node.NewPackets, staleNode.StalePackets, bottle)
 
-			// transfere pacotes e atualiza energias
+			// atualiza energias e métricas
 			updateEnergy(node, staleNode, cost, q)
+			g.Metrics.TotalEnergyConsumed += cost * float64(q)
+			g.Metrics.TotalPacketsOffloaded += q
+
 			node.NewPackets -= q
 			staleNode.StalePackets -= q
 
-			fmt.Printf("Offload %d pacotes de %d → %d (custo=%.2f)\n",
-				q, node.ID, staleNode.ID, cost)
-
-			// remove nós sem energia (energia <= 0)
+			// remove nós com energia <= 0
 			if node.Energy <= 0 {
 				node.Energy = 0
-				break
 			}
 			if staleNode.Energy <= 0 {
 				staleNode.Energy = 0
 			}
 		}
 	}
+
+	depleted := 0
+	for _, n := range g.Nodes {
+		if n.Energy <= 0 {
+			depleted++
+		}
+	}
+	g.Metrics.EnergyDepletedNodes = depleted
 }
 
-// utilitário para mínimo entre três inteiros
+// Utils
 func minInt(a, b, c int) int {
 	min := a
 	if b < min {
@@ -57,4 +59,12 @@ func minInt(a, b, c int) int {
 		min = c
 	}
 	return min
+}
+
+func (g *Graph) PrintMetrics() {
+	fmt.Println("\n===== MÉTRICAS MIF (Greedy) =====")
+	fmt.Printf("Energia total consumida: %.2f\n", g.Metrics.TotalEnergyConsumed)
+	fmt.Printf("Total de pacotes offloadados (Transferir quando encher): %d\n", g.Metrics.TotalPacketsOffloaded)
+	fmt.Printf("Nós com energia esgotada: %d\n", g.Metrics.EnergyDepletedNodes)
+	fmt.Println("=================================")
 }

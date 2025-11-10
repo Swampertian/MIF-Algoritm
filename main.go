@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 func main() {
 	g := &Graph{
 		Nodes: map[int]*Node{
@@ -18,5 +14,6 @@ func main() {
 		},
 	}
 
-	fmt.Println(g)
+	g.GreedyMIF()
+	g.PrintMetrics()
 }
