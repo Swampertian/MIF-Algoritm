@@ -17,26 +17,6 @@ func (g *Graph) closestStaleNeighbor(dataID int) (int, float64) {
 	return best, minCost
 }
 
-func bottleneckCapacity(dataNode, staleNode *Node, cost float64) int {
-
-	if cost <= 0 {
-		return 0
-	}
-	ePerPacket := cost
-	maxSend := int(math.Floor(dataNode.Energy / ePerPacket))
-	maxRecv := int(math.Floor(staleNode.Energy / ePerPacket))
-	if maxSend < maxRecv {
-		return maxSend
-	}
-	return maxRecv
-}
-
-func updateEnergy(sender, receiver *Node, cost float64, packets int) {
-	totalCost := cost * float64(packets)
-	sender.Energy -= totalCost
-	receiver.Energy -= totalCost
-}
-
 func (g *Graph) freshness(t int) int {
 	sum := 0
 	for _, n := range g.Nodes {

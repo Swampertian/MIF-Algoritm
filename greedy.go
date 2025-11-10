@@ -24,7 +24,6 @@ func (g *Graph) GreedyMIFSimple(t int) {
 				break
 			}
 
-			// substitui os q pacotes mais antigos
 			dn.NewPackets = dn.NewPackets[q:]
 			sn.StalePackets = sn.StalePackets[q:]
 
