@@ -9,7 +9,8 @@ func (g *Graph) closestStaleNeighbor(dataID int) (int, float64) {
 	best := -1
 	for _, e := range g.Edges[dataID] {
 		dest := g.Nodes[e.To]
-		if len(dest.StalePackets) > 0 && dest.Energy > 0 && e.Cost < minCost {
+		// exigir que o receptor tenha energia mínima para receber ao menos 1 pacote (>= custo do link)
+		if len(dest.StalePackets) > 0 && dest.Energy >= e.Cost && e.Cost < minCost {
 			minCost = e.Cost
 			best = e.To
 		}
