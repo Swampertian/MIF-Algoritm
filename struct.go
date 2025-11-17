@@ -8,6 +8,7 @@ type Node struct {
 	Energy       float64
 	NewPackets   []Packet
 	StalePackets []Packet
+	Depleted     bool
 }
 
 type Edge struct {
