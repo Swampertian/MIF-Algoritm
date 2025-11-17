@@ -5,7 +5,7 @@ func main() {
 		Nodes: map[int]*Node{
 			1: {
 				ID:     1,
-				Energy: 20,
+				Energy: 10,
 				NewPackets: []Packet{
 					{Timestamp: 10}, {Timestamp: 10}, {Timestamp: 10},
 				},
